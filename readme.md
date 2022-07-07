@@ -6,6 +6,8 @@ Create map video with evolution of lanes.
 
 Total length appears to be quite large, needs checking/confirmation
 
+![](tracks.png)
+
 ## Demo Video
 
 [Demo](https://cloud.ok-lab-karlsruhe.de/index.php/s/4LLJN93jZQwEN9b)
