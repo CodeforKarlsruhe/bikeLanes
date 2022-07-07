@@ -12,5 +12,8 @@ Total length appears to be quite large, needs checking/confirmation
 
 [Demo](https://cloud.ok-lab-karlsruhe.de/index.php/s/4LLJN93jZQwEN9b)
 
+## Issues
 
+ * OSM Contributors copyright text hidden by info text => move away ....
+ 
 
