@@ -134,13 +134,14 @@ def init():
     print("init color",color)
     current = edf[edf.year <= years[1]]
     length = current.length.sum() / 1000
+    tracks = len(edf[edf.year  <= years[1]])
     current.plot(
         color=color,
         ax = ax,
         figsize=(10,10))
 
     ## lt = f"Bis {years[1]}: {length:.2f} km"
-    lt = f"Bis {years[1]}: {format_decimal(length, format='#.#', locale='de_DE')} km"
+    lt = f"Bis {years[1]}: {tracks} Wege. {format_decimal(length, format='#.#', locale='de_DE')} km"
 
     ax.text(tx,ty,lt, fontsize=24)
     cx.add_basemap(ax, crs=edf.crs, source=basemap)
@@ -163,7 +164,7 @@ def update(frame):
         figsize=(10,10))
 
     #lt = f"{frame}: {tracks} Wege, {length:.2f} km      "
-    lt = f"{frame}: {format_decimal(length, format='#.#', locale='de_DE')} km     "
+    lt = f"{frame}: {tracks} Wege. {format_decimal(length, format='#.#', locale='de_DE')} km     "
     ax.text(tx,ty,lt,
         backgroundcolor='0.8',alpha=1,
         fontsize=24)
