@@ -1,3 +1,9 @@
+""" bike_new_ka.py 
+Demo-Application
+Load geojson with karlsruhe bikelanes since 1980 
+Create summary image and video of evolution
+"""
+
 import geopandas as gp
 import datetime as dt
 # matplotlib only for interactive plot
