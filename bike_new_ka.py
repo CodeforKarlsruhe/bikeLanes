@@ -84,14 +84,28 @@ colorMap = cls.LinearSegmentedColormap.from_list(
 minBounds = edf.geometry.bounds.min()
 maxBounds = edf.geometry.bounds.max()
 
-bounds = [minBounds.minx,minBounds.miny,maxBounds.maxx,maxBounds.maxy]
+width = maxBounds.maxx - minBounds.minx
+height = maxBounds.maxy - minBounds.miny
+
+bounds = [minBounds.minx - int(width*.03),
+          minBounds.miny - int(height*.03),
+          maxBounds.maxx + int(width*.03),
+          maxBounds.maxy + int(height*.03)]
 
 # text pos
-tx = minBounds.minx
-ty = minBounds.miny
+tx = bounds[0] + int(width * .02)
+ty = bounds[1] - int(height * .08)
+
+fig, ax = plt.subplots(1, 1)
+fig.set_dpi(96)
+fig.set_figwidth(10)
+fig.set_figheight(10)
+ax.set_xlim(bounds[0],bounds[2])
+ax.set_ylim(bounds[1],bounds[3])
 
 # changing year to color gives same coloring as in video
-ax = edf.plot("year",
+edf.plot("year",
+         ax = ax,
         cmap = colorMap,
         legend=True,
         legend_kwds={
@@ -114,6 +128,7 @@ ax.axis("off")
 ax.text(tx,ty ,str(years[0]) + " - " + str(years[-1]),
         backgroundcolor='0.75',alpha=.5,
         fontsize=24)
+plt.title('Radwege Karlsruhe')
 ax.figure.savefig(png)
 
 plt.show()
@@ -127,8 +142,8 @@ fig, ax = plt.subplots(1, 1)
 fig.set_dpi(96)
 fig.set_figwidth(10)
 fig.set_figheight(10)
-ax.set_xlim(minBounds.minx, maxBounds.maxx)
-ax.set_ylim(minBounds.miny,maxBounds.maxy)
+ax.set_xlim(bounds[0],bounds[2])
+ax.set_ylim(bounds[1],bounds[3])
 ax.axis("off")
 
 ln, = plt.plot([], [], 'ro')
@@ -151,6 +166,7 @@ def init():
 
     ax.text(tx,ty,lt, fontsize=24)
     cx.add_basemap(ax, crs=edf.crs, source=basemap)
+    plt.title('Radwege Karlsruhe')
     
     print("init done")
     return ln, 

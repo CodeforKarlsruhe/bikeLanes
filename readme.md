@@ -14,6 +14,6 @@ Total length appears to be quite large, needs checking/confirmation
 
 ## Issues
 
- * OSM Contributors copyright text hidden by info text => move away ....
+ * Fixed: OSM Contributors copyright text hidden by info text
  
 
