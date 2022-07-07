@@ -56,7 +56,7 @@ def colorFader(c1,c2,mix=0): #fade (linear interpolate) from color c1 (at mix=0)
 colors = []
 N = len(years)
 for i in range(0,N):
-    colors.append(colorFader("blue","yellow",i/N))
+    colors.append(colorFader("black","blue",i/N))
 
 ys = [str(y) for y in years]
 cmap = dict(zip(ys,colors))
