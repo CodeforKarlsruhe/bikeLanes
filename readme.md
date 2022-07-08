@@ -15,5 +15,9 @@ Total length appears to be quite large, needs checking/confirmation
 ## Issues
 
  * Fixed: OSM Contributors copyright text hidden by info text
+ * Number of tracks and total length suspicious. Check with data provider
+    * Removing duplicates (geometry based) helps, but maybe not sufficient
+
+  
  
 
