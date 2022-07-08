@@ -17,14 +17,22 @@ from matplotlib.animation import FuncAnimation
 
 # https://geopandas.org/en/stable/gallery/plotting_basemap_background.html
 import contextily as cx
+# loading a basemap needs internet. Option to don't
+loadMap = False
 
 # german floats
 from babel.numbers import format_decimal
 
 
 df = gp.read_file("bike_new_ka.geojson")
-
 print("CRS:",df.crs)
+print("Items read:", len(df))
+
+
+# we have a number of duplicate geometries. keep latest only 
+df.drop_duplicates(subset = "geometry", keep="last", inplace=True)
+print("Items remaining:", len(df))
+
 
 print("Europe is 3035, see https://epsg.io/3035")
 
@@ -40,6 +48,8 @@ def yrs(x):
 
 edf["year"] = edf.VORGANGSZE.apply(yrs)
 print("Years:\n",edf.year)
+
+edf.to_file("edf.geojson")
 
 png = "tracks.png"
 print(f"Plotting to {png}")
@@ -121,8 +131,9 @@ edf.plot("year",
 # provider list: cx.providers
 # cx.add_basemap(ax, crs=edf.crs,source=cx.providers.OpenStreetMap.DE)
 
-basemap = cx.providers.OpenStreetMap.Mapnik
-cx.add_basemap(ax, crs=edf.crs,source=basemap)
+if loadMap:
+    basemap = cx.providers.OpenStreetMap.Mapnik
+    cx.add_basemap(ax, crs=edf.crs,source=basemap)
 
 ax.axis("off")
 ax.text(tx,ty ,str(years[0]) + " - " + str(years[-1]),
@@ -165,7 +176,8 @@ def init():
     lt = f"Bis {years[1]}: {tracks} Wege. {format_decimal(length, format='#.#', locale='de_DE')} km"
 
     ax.text(tx,ty,lt, fontsize=24)
-    cx.add_basemap(ax, crs=edf.crs, source=basemap)
+    if loadMap:
+        cx.add_basemap(ax, crs=edf.crs, source=basemap)
     plt.title('Radwege Karlsruhe')
     
     print("init done")
