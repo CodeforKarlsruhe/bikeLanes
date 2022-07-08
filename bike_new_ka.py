@@ -18,7 +18,7 @@ from matplotlib.animation import FuncAnimation
 # https://geopandas.org/en/stable/gallery/plotting_basemap_background.html
 import contextily as cx
 # loading a basemap needs internet. Option to don't
-loadMap = False
+loadMap = True
 
 # german floats
 from babel.numbers import format_decimal
