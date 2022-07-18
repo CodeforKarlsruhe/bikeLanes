@@ -49,6 +49,7 @@ def yrs(x):
 edf["year"] = edf.VORGANGSZE.apply(yrs)
 print("Years:\n",edf.year)
 
+
 edf.to_file("edf.geojson")
 
 png = "tracks.png"
@@ -57,6 +58,13 @@ print(f"Plotting to {png}")
 # plot, color by years
 years = gp.np.sort(edf.year.unique())
 print("Years:\n",years)
+
+print(f"Total length: {edf.length.sum()/1000:.1f} km")
+g = edf.groupby(by="year")
+for y in years:
+    print(f"{y}: {g.get_group(y).length.sum()/1000:.1f} km")
+    print(f"Accumulated up to {y}: {edf[edf.year <= y].length.sum()/1000:.1f} km")
+    
 
 def colorFader(c1,c2,mix=0): #fade (linear interpolate) from color c1 (at mix=0) to c2 (mix=1)
     c1=gp.np.array(cls.to_rgb(c1))
@@ -205,7 +213,12 @@ def update(frame):
     print("update done ")
     return ln,
 
-ani = FuncAnimation(fig, update, frames=years[1:],
+# append some copies final frame
+frm = years[1:]
+for i in range(3):
+    frm = gp.np.concatenate([frm,[years[-1]]])
+    
+ani = FuncAnimation(fig, update, frames=frm,
                     init_func=init, interval = 1500, blit=True)
 
 ani.save("tracks.mp4")
