@@ -33,6 +33,7 @@ print("Items read:", len(df))
 df.drop_duplicates(subset = "geometry", keep="last", inplace=True)
 print("Items remaining:", len(df))
 
+df.to_file("bike_new_ka_cleaned.geojson")
 
 print("Europe is 3035, see https://epsg.io/3035")
 
@@ -98,6 +99,7 @@ colorMap = cls.LinearSegmentedColormap.from_list(
 # https://geopandas.org/en/stable/docs/user_guide/mapping.html
 #
 
+
 # bounds 
 minBounds = edf.geometry.bounds.min()
 maxBounds = edf.geometry.bounds.max()
@@ -110,14 +112,27 @@ bounds = [minBounds.minx - int(width*.03),
           maxBounds.maxx + int(width*.03),
           maxBounds.maxy + int(height*.03)]
 
+# fig dimensions
+figSize = 20
+figDpi = 100
+figFs = int(20 * figSize / 10)
+
 # text pos
 tx = bounds[0] + int(width * .02)
 ty = bounds[1] - int(height * .08)
 
 fig, ax = plt.subplots(1, 1)
-fig.set_dpi(96)
-fig.set_figwidth(10)
-fig.set_figheight(10)
+fig.set_dpi(figDpi)
+fig.set_figwidth(figSize)
+fig.set_figheight(figSize)
+# adjust values for figsize 20
+plt.subplots_adjust(top=0.92,
+bottom=0.019,
+left=0.023,
+right=0.987,
+hspace=0.2,
+wspace=0.2)
+
 ax.set_xlim(bounds[0],bounds[2])
 ax.set_ylim(bounds[1],bounds[3])
 
@@ -130,7 +145,7 @@ edf.plot("year",
             'label': "Year",
             'orientation': "horizontal"
             },
-        figsize=(10,10))
+        figsize=(figSize,figSize))
 
 # osm providers: ['Mapnik', 'DE', 'CH', 'France', 'HOT', 'BZH', 'BlackAndWhite']
 # Mapnik and DE work
@@ -144,10 +159,13 @@ if loadMap:
     cx.add_basemap(ax, crs=edf.crs,source=basemap)
 
 ax.axis("off")
-ax.text(tx,ty ,str(years[0]) + " - " + str(years[-1]),
+
+length = edf.length.sum() / 1000
+lt = f"{years[0]} - {years[-1]}. {format_decimal(length, format='#.#', locale='de_DE')} km"
+ax.text(tx,ty ,lt,
         backgroundcolor='0.75',alpha=.5,
-        fontsize=24)
-plt.title('Radwege Karlsruhe')
+        fontsize=figFs)
+plt.title('Radwege Karlsruhe',fontsize=int(figFs*1.2))
 ax.figure.savefig(png)
 
 plt.show()
@@ -157,10 +175,22 @@ plt.show()
 
 #####
 
+figSize = 10
+figDpi = 100
+figFs = int(20 * figSize / 10)
+
 fig, ax = plt.subplots(1, 1)
-fig.set_dpi(96)
-fig.set_figwidth(10)
-fig.set_figheight(10)
+fig.set_dpi(figDpi)
+fig.set_figwidth(figSize)
+fig.set_figheight(figSize)
+
+plt.subplots_adjust(top=0.96,
+bottom=0.05,
+left=0.023,
+right=0.987,
+hspace=0.2,
+wspace=0.2)
+
 ax.set_xlim(bounds[0],bounds[2])
 ax.set_ylim(bounds[1],bounds[3])
 ax.axis("off")
@@ -170,23 +200,23 @@ ln, = plt.plot([], [], 'ro')
 # we start with 1980-2007 to skip gap
 def init():
     print("init start")
-    color = cmap[str(years[0])]
-    print("init color",color)
-    current = edf[edf.year <= years[1]]
-    length = current.length.sum() / 1000
-    tracks = len(edf[edf.year  <= years[1]])
-    current.plot(
-        color=color,
-        ax = ax,
-        figsize=(10,10))
-
-    ## lt = f"Bis {years[1]}: {length:.2f} km"
-    lt = f"Bis {years[1]}: {tracks} Wege. {format_decimal(length, format='#.#', locale='de_DE')} km"
-
-    ax.text(tx,ty,lt, fontsize=24)
+##    color = cmap[str(years[0])]
+##    print("init color",color)
+##    current = edf[edf.year <= years[1]]
+##    length = current.length.sum() / 1000
+##    tracks = len(edf[edf.year  <= years[1]])
+##    current.plot(
+##        color=color,
+##        ax = ax,
+##        figsize=(10,10))
+##
+##    ## lt = f"Bis {years[1]}: {length:.2f} km"
+##    lt = f"Bis {years[1]}: {tracks} Wege. {format_decimal(length, format='#.#', locale='de_DE')} km"
+##
+##    ax.text(tx,ty,lt, fontsize=24)
     if loadMap:
         cx.add_basemap(ax, crs=edf.crs, source=basemap)
-    plt.title('Radwege Karlsruhe')
+    plt.title('Radwege Karlsruhe',fontsize=int(figFs*1.2))
     
     print("init done")
     return ln, 
@@ -203,19 +233,19 @@ def update(frame):
     current.plot(
         color=color,
         ax = ax,
-        figsize=(10,10))
+        figsize=(figSize,figSize))
 
     #lt = f"{frame}: {tracks} Wege, {length:.2f} km      "
     lt = f"{frame}: {tracks} Wege. {format_decimal(length, format='#.#', locale='de_DE')} km     "
     ax.text(tx,ty,lt,
         backgroundcolor='0.8',alpha=1,
-        fontsize=24)
+        fontsize=figFs)
     print("update done ")
     return ln,
 
 # append some copies final frame
 frm = years[1:]
-for i in range(3):
+for i in range(5):
     frm = gp.np.concatenate([frm,[years[-1]]])
     
 ani = FuncAnimation(fig, update, frames=frm,
